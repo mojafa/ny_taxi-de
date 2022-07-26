@@ -5,4 +5,4 @@ ny_taxi_postgres_data
 services.yml
 *.csv
 data_pgadmin
-.DS_Store
+*.DS_Store
