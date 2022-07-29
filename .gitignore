@@ -1,3 +1,4 @@
+.env 
 .ipynb_checkpoints
 ny_taxi_postgres_data
 --user=root
@@ -7,4 +8,6 @@ services.yml
 data_pgadmin
 *.DS_Store
 .terraform
-.terraform/
+week2_airflow/airflow/logs
+week2_airflow/airflow/plugins
+week2_airflow/airflow/requirements.txt
