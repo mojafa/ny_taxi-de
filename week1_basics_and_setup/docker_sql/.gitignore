@@ -6,4 +6,5 @@ services.yml
 *.csv
 data_pgadmin
 *.DS_Store
-*.terraform
+.terraform
+.terraform/
