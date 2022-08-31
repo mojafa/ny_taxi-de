@@ -26,20 +26,19 @@ local_workflow = DAG(
     start_date=datetime(2021, 1, 1)
 )
 
-#url = 'https://d37ci6vzurychx.cloudfront.net/trip-data/yellow_tripdata_2021-01.parquet'
-# URL_PREFIX = 'https://d37ci6vzurychx.cloudfront.net/trip-data' 
-# URL_TEMPLATE = URL_PREFIX + '/yellow_tripdata_{{ execution_date.strftime(\'%Y-%m\') }}.parquet'
-# OUTPUT_FILE_TEMPLATE = AIRFLOW_HOME + '/nytrips_{{ execution_date.strftime(\'%Y-%m\') }}.parquet'
-# TABLE_NAME_TEMPLATE = 'yellow_taxi_{{ execution_date.strftime(\'%Y_%m\') }}'
-
 url = 'https://d37ci6vzurychx.cloudfront.net/trip-data/yellow_tripdata_2021-01.parquet'
+URL_PREFIX = 'https://d37ci6vzurychx.cloudfront.net/trip-data' 
+URL_TEMPLATE = URL_PREFIX + '/yellow_tripdata_{{ execution_date.strftime(\'%Y-%m\') }}.parquet'
+OUTPUT_FILE_TEMPLATE = AIRFLOW_HOME + '/nytrips_{{ execution_date.strftime(\'%Y-%m\') }}.parquet'
+TABLE_NAME_TEMPLATE = 'yellow_taxi_{{ execution_date.strftime(\'%Y_%m\') }}'
+
 # URL_PREFIX = 'https://s3.amazonaws.com/nyc-tlc/trip+data' 
 # URL_TEMPLATE = URL_PREFIX + '/yellow_tripdata_{{ execution_date.strftime(\'%Y-%m\') }}.csv'
 # OUTPUT_FILE_TEMPLATE = AIRFLOW_HOME + '/output_{{ execution_date.strftime(\'%Y-%m\') }}.csv'
 # TABLE_NAME_TEMPLATE = 'yellow_taxi_{{ execution_date.strftime(\'%Y_%m\') }}'
 
 OUTPUT_FILE_TEMPLATE = AIRFLOW_HOME + '/yellow_taxi_trips{{ execution_date.strftime(\'%Y-%m\') }}.parquet'
-TABLE_NAME_TEMPLATE = 'yellow_taxi_trips{{ execution_date.strftime(\'%Y_%m\') }}'
+TABLE_NAME_TEMPLATE = 'yellow_taxi_trips_{{ execution_date.strftime(\'%Y_%m\') }}'
 
 with local_workflow:
     wget_task = BashOperator(
