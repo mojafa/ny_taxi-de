@@ -8,30 +8,32 @@ import pyarrow.parquet as pq
 from sqlalchemy import create_engine
 
 
-def ingest_callable(user, password, host, port, db, table_name, filename):
-   #print(table_name, filename)
+def ingest_callable(user, password, host, port, db, table_name, filename, execution_date):
+    print(table_name, filename,execution_date)
 
     engine = create_engine(f'postgresql://{user}:{password}@{host}:{port}/{db}')
     engine.connect()
-
-
-    parquet_table = pq.read_table(filename)
-    df = parquet_table.to_pandas()
-    df.to_csv('output.csv',index=False, sep='\t')
-    df.to_sql(name="yellow_taxi_data", con=engine, if_exists='append', chunksize=100000)
-    
+    engine.execute(f'DROP TABLE IF EXISTS {table_name}')
     print('connection established successfully, inserting data...')
 
     t_start = time()
-    df_iter = pd.read_parquet(filename)
-    df = next(df_iter)
-
+    df = pd.read_parquet(filename)
+    parquet_table = pq.read_table(filename)
+    df = parquet_table.to_pandas()
+    df.to_csv(table_name,index=False, sep='\t')
     df.tpep_pickup_datetime = pd.to_datetime(df.tpep_pickup_datetime)
     df.tpep_dropoff_datetime = pd.to_datetime(df.tpep_dropoff_datetime)
 
-    df.head(n=0).to_sql(name=table_name, con=engine, if_exists='replace')
+    df_iter = pd.read_csv(table_name, iterator=True, chunksize=100000)
+   
+    df = next(df_iter)
 
-    df.to_sql(name=table_name, con=engine, if_exists='append')
+    
+    df.head(n=0).to_sql(name=table_name, con=engine, if_exists='replace')
+    # df.tpep_pickup_datetime = pd.to_datetime(df.tpep_pickup_datetime)
+    # df.tpep_dropoff_datetime = pd.to_datetime(df.tpep_dropoff_datetime)
+
+    df.to_sql(name=table_name, con=engine, if_exists='replace')
 
     t_end = time()
     print('inserted the first chunk, took %.3f second' % (t_end - t_start))
@@ -45,10 +47,10 @@ def ingest_callable(user, password, host, port, db, table_name, filename):
             print("completed")
             break
 
-        df.tpep_pickup_datetime = pd.to_datetime(df.tpep_pickup_datetime)
-        df.tpep_dropoff_datetime = pd.to_datetime(df.tpep_dropoff_datetime)
+        # df.tpep_pickup_datetime = pd.to_datetime(df.tpep_pickup_datetime)
+        # df.tpep_dropoff_datetime = pd.to_datetime(df.tpep_dropoff_datetime)
 
-        df.to_sql(name=table_name, con=engine, if_exists='append')
+        df.to_sql(name=table_name, con=engine, if_exists='replace')
 
         t_end = time()
 
